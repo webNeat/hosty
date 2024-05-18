@@ -1,10 +1,12 @@
 {
   "name": "hosty",
-  "version": "0.0.1-alpha.2",
+  "version": "0.0.1-alpha.3",
   "description": "Self host your web apps and services with ease.",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "test": "tsx tests/run.ts"
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --import tsx test.ts"
   },
   "repository": {
     "type": "git",
@@ -23,5 +25,17 @@
   "bugs": {
     "url": "https://github.com/webNeat/hosty/issues"
   },
-  "homepage": "https://github.com/webNeat/hosty#readme"
+  "homepage": "https://github.com/webNeat/hosty",
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/yaml": "^1.9.7",
+    "@types/yamljs": "^0.2.34",
+    "prettier": "^3.2.5",
+    "tsx": "^4.10.5",
+    "typescript": "^5.4.5",
+    "zx": "^8.1.4"
+  },
+  "dependencies": {
+    "yaml": "^2.4.5"
+  }
 }

@@ -1,0 +1,25 @@
+databases:
+  ☐ postgres
+  ☐ mysql
+  ☐ redis
+  ☐ mongodb
+  features:
+    ☐ auto backups
+
+git_repo:
+  ☐ clone, package, run
+  ☐ redo only on change
+  ☐ specific branch
+
+github action:
+  ☐ deploy on merge into the deployed branch
+  ☐ deploy any branch on demand? (manual step on github actions)
+    how to duplicate related containers like db?
+
+test apps:
+  ☐ static
+  ☐ Nextjs
+  ☐ Remix
+  ☐ Laravel
+  ☐ Adonis
+  ☐ Wordpress
