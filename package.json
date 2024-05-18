@@ -1,6 +1,6 @@
 {
   "name": "hosty",
-  "version": "0.0.1-alpha",
+  "version": "0.0.1-alpha.2",
   "description": "Self host your web apps and services with ease.",
   "main": "dist/index.js",
   "scripts": {
