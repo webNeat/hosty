@@ -1,6 +1,6 @@
-import { Role } from '../ansible/types.js'
-import { Assertions, Container } from '../types.js'
+import { Tasks } from '../ansible/types.js'
+import { Assertions } from '../types.js'
 
-export function assertions(...roles: Role[]): Assertions {
-  return { get_roles: () => roles }
+export function assertions(...tasks: Tasks): Assertions {
+  return { type: 'assertions', get_deploy_tasks: () => tasks, get_destroy_tasks: () => [] }
 }

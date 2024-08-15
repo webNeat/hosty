@@ -1,11 +1,19 @@
 import * as zx from 'zx'
-import { Assertions, Service, instance, server } from '../../src/index.js'
 import { ChildProcess } from 'child_process'
+import { HostyInstance, Server, Service, assert, assertions, instance, server } from '../../src/index.js'
 
+type Assert = {
+  [K in keyof typeof assert]: (...args: Parameters<(typeof assert)[K]>) => void
+}
+type TestContext = {
+  deploy: (...services: Service[]) => void
+  destroy: (...services: Service[]) => void
+  assert: Assert
+}
+type TestFn = (ctx: TestContext) => Promise<void>
 type TestCase = {
   name: string
-  services: Service[]
-  assertions: Assertions
+  fn: TestFn
 }
 type Failure = {
   name: string
@@ -15,28 +23,25 @@ type Failure = {
 const cases: TestCase[] = []
 const $ = zx.$({ quiet: true })
 
-export async function test(name: string, config: { services: Service[]; assertions: Assertions }) {
-  cases.push({ name, ...config })
+export async function test(name: string, fn: TestFn) {
+  cases.push({ name, fn })
 }
 
 export async function run() {
   console.log(`Checking dependencies ...`)
-  if ((await $`docker --version`).exitCode) {
-    throw new Error('`docker` is required to run tests, please install it first then try again!')
-  }
   if ((await $`ansible-playbook --version`).exitCode) {
     throw new Error('`ansible` is required to run tests, please install it first then try again!')
   }
-
-  console.log(`Building hosty-test docker image ...`)
-  await $`docker build -t hosty-test tests/utils`
+  await $`docker ps -q --filter "name=^/hosty-" | xargs -r docker stop`
+  await $`docker ps -aq --filter "name=^/hosty-" | xargs -r docker rm`
+  await $`sudo rm -rf /srv/hosty`
 
   console.log(`Running test cases ...`)
   const failures: Failure[] = []
   for (const x of cases) {
     try {
       console.log(`⏳ ${x.name}`)
-      await runTestCase(x)
+      await run_test_case(x)
       console.log(`✅ ${x.name}`)
     } catch (err) {
       console.log(`❌ ${x.name}`)
@@ -60,41 +65,39 @@ export async function run() {
   process.exit(1)
 }
 
-async function runTestCase({ name, services, assertions }: TestCase) {
+async function run_test_case({ name, fn }: TestCase) {
   const test_name = name.replace(/[^a-zA-Z0-9]/g, '-')
-  const container_name = `hosty-test-${test_name}`
-  const playbookPath = `.tests/${test_name}.yaml`
-  await $`docker rm -f ${container_name}`
-  await $`docker run -d --name ${container_name} --privileged -v /var/run/docker.sock:/var/run/docker.sock -e ANSIBLE_FORCE_COLOR=true hosty-test`
+  const playbook_path = `.tests/${test_name}.yaml`
+  const user = (await $`whoami`).stdout.trim()
 
   const container = server({
     name: 'localhost',
-    connection: { type: 'docker', container: container_name, user: 'foo', password: 'foo' },
-    ssh_key: { path: '/home/foo/.ssh/id_rsa', passphrase: '' },
+    connection: { type: 'local', user },
+    ssh_key: { path: '~/.ssh/id_rsa', passphrase: '' },
     git_config: { name: 'Amine Ben hammou', email: 'webneat@gmail.com' },
   })
   const test_instance = instance()
-  test_instance.deploy(container, [...services, assertions])
+  await fn(make_test_context(container, test_instance))
 
-  const res = await waitProcess(await test_instance.run({ playbookPath, ask_sudo_pass: false, spawn_options: { stdio: 'pipe' } }))
-  if (res.exitCode) throw res.stderr
-  await $`docker stop ${container_name}`
-  await $`docker rm ${container_name}`
+  const res = await wait_process(await test_instance.run({ playbook_path, ask_sudo_pass: false, spawn_options: { stdio: 'pipe' } }))
+  if (res.exitCode) throw res.output
+  await $`docker ps -q --filter "name=^/hosty-" | xargs -r docker stop`
+  await $`docker ps -aq --filter "name=^/hosty-" | xargs -r docker rm`
+  await $`sudo rm -rf /srv/hosty`
 }
 
 type ProcessResult = {
   exitCode: number | null
-  stdout: string
-  stderr: string
+  output: string
 }
-async function waitProcess(ps: ChildProcess) {
+async function wait_process(ps: ChildProcess) {
   return new Promise<ProcessResult>((resolve, reject) => {
-    const res: ProcessResult = { exitCode: null, stdout: '', stderr: '' }
+    const res: ProcessResult = { exitCode: null, output: '' }
     ps.stdout?.on('data', (data) => {
-      res.stdout += data.toString()
+      res.output += data.toString()
     })
     ps.stderr?.on('data', (data) => {
-      res.stderr += data.toString()
+      res.output += data.toString()
     })
     ps.on('close', (code) => {
       res.exitCode = code
@@ -102,4 +105,20 @@ async function waitProcess(ps: ChildProcess) {
     })
     ps.on('error', reject)
   })
+}
+
+function make_test_context(server: Server, instance: HostyInstance): TestContext {
+  const boundAssert: Partial<Assert> = {}
+  for (const name in assert) {
+    const fnName = name as keyof typeof assert
+    boundAssert[fnName] = (...args) => {
+      // @ts-ignore
+      instance.deploy(server, assertions(assert[fnName](...args)))
+    }
+  }
+  return {
+    deploy: (...services) => instance.deploy(server, ...services),
+    destroy: (...services) => instance.destroy(server, ...services),
+    assert: boundAssert as Assert,
+  }
 }

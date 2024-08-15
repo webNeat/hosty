@@ -24,10 +24,8 @@ export type Handler<ModuleName extends string, ModuleAttrs> = Task<ModuleName, M
 export type AnyTask = Task<string, {}>
 export type AnyHandler = Handler<string, {}>
 
-export type Role = {
-  tasks: AnyTask[]
-  handlers: AnyTask[]
-}
+export type Tasks = AnyTask[]
+export type Block = Task<'block', Tasks>
 
 export type Step = {
   hosts: string

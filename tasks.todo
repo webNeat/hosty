@@ -1,25 +1,42 @@
 databases:
-  ☐ postgres
-  ☐ mysql
-  ☐ redis
+  ✔ postgres @done
+  ✔ mysql @done
+  ✔ redis @done
   ☐ mongodb
   features:
     ☐ auto backups
 
-git_repo:
-  ☐ clone, package, run
-  ☐ redo only on change
-  ☐ specific branch
+app.git:
+  ✔ clone, package, run
+  ✔ redo only on change
+  ✔ specific branch
+  ✔ custom dockerfile @done
+  ✔ synchronous commands/asserts during deploy @done
+  ✔ number of instances @done
 
-github action:
-  ☐ deploy on merge into the deployed branch
-  ☐ deploy any branch on demand? (manual step on github actions)
+add destroy:
+  ✔ add a `destroy` method to undo deploy of a service, app, ... @done
+  ✔ update tests to support destroy @done
+
+commands:
+  ✔ run commands before starting/restarting an app @done
+  ✔ run commands after starting/restarting an app @done
+  ✔ run commands periodically (a cron job) @done
+  ✔ choose to run the command inside a container or in the host machine @done
+
+☐ try monitoring with vector and axiom
+
+github actions:
+  ☐ Create an example repo:
+    deploy any branch on demand
+    destroy on branch deletion
     how to duplicate related containers like db?
 
 test apps:
-  ☐ static
-  ☐ Nextjs
+  ✔ static @done
+  ✔ Laravel @done
+  ✔ Adonis @done
+  ✔ Nextjs @done
+  ✔ Rust @done
   ☐ Remix
-  ☐ Laravel
-  ☐ Adonis
   ☐ Wordpress

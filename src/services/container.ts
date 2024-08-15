@@ -1,37 +1,31 @@
 import path from 'path'
-import * as yaml from 'yaml'
-import { Role } from '../ansible/types.js'
-import { roles } from '../ansible/index.js'
-import { ComposeFile } from '../compose.types.js'
+import { Tasks } from '../ansible/types.js'
+import * as blocks from '../blocks/index.js'
 import { Container, ContainerConfig, Server } from '../types.js'
 
 export function container(config: ContainerConfig): Container {
-  return { ...config, get_roles: (server) => get_roles(server, config) }
+  return {
+    ...config,
+    type: 'container',
+    get_deploy_tasks: (server) => get_deploy_tasks(server, config),
+    get_destroy_tasks: (server) => get_destroy_tasks(server, config),
+  }
 }
 
-function get_roles(server: Server, { name, compose, files_dir }: ContainerConfig): Role[] {
-  const composeFile: ComposeFile = {
-    services: {
-      [name]: {
-        container_name: name,
-        networks: [server.docker_network],
-        restart: 'unless-stopped',
-        ...compose,
-      },
-    },
-    networks: {
-      [server.docker_network]: {
-        external: true,
-      },
-    },
-  }
+function get_deploy_tasks(server: Server, { name, compose, files_dir, files }: ContainerConfig): Tasks {
   return [
-    roles.create_service({
-      name,
+    blocks.create_service({
+      name: server.docker_prefix + name,
+      compose,
       files_dir,
-      service_dir: path.join(server.hosty_dir, '/services', name),
+      files,
       docker_network: server.docker_network,
-      docker_compose: yaml.stringify(composeFile),
+      service_dir: path.join(server.hosty_dir, '/services', name),
+      restart_conditions: [],
     }),
   ]
+}
+
+function get_destroy_tasks(server: Server, { name }: ContainerConfig): Tasks {
+  return [blocks.delete_service(path.join(server.hosty_dir, '/services', name))]
 }

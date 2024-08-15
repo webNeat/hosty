@@ -1,60 +1,59 @@
 # Hosty
 
-**This package is still under development, not ready for use yet!**
-
 A code based opinionated way to self-host and manage web apps.
 
-1. You write code describing what you want to deploy. For example:
+# Quick Example
+
 ```ts
-import {app, deploy, host, database} from 'hosty'
+import {app, db, deploy, run} from 'hosty'
 
-// a Postgres database
-const db = database({
-  type: 'postgres',
-  name: 'awesome',
-  user: 'myuser',
-  pass: 'mypass',
+// 1. Specify what you want to deploy
+
+// A postgres database
+const database = db.postgres({
+  name: 'my-db',
+  user: 'db_user',
+  pass: 'db_pass'
 })
 
-// a web app that uses the db above
-const myapp = app({
-  domain: 'your-domain.com',
-  repo: 'https://github.com/....git',
+// An application from a Git repo
+const api = app.git({
+  name: 'my-api',
+  repo: 'https://url-to-my-repo.git',
   branch: 'main',
+  domain: 'my-api-domain.com',
   env: {
-    DB_HOST: db.host,
-    DB_USER: db.user,
-    DB_PASS: db.pass,
-    DB_NAME: db.name,
-  }
+    PORT: '80',
+    DB_HOST: database.host,
+    DB_USER: database.user,
+    DB_PASS: database.pass,
+    DB_NAME: database.name,
+  },
 })
 
-// The server to which you want to deploy
-const server = host({
-  address: 'domain name or IP'
+// 2. Specify where you want deploy
+const myVPS = server({
+  name: '188.114.97.6' // hostname or IP
 })
 
-// Deploy the app and database to the server
-deploy(server, [db, myapp])
-```
-2. You run `npx hosty deploy` to apply what you described.
-
-That's it, the database is created and your app is now deployed to `https://your-domain.com` (Yes, the SSL certificate is also taken care off!).
-
-## Prerequisits
-
-1. A Linux server to which you have SSH access. 
-  - This can be a VPS, a home-lab server or any Linux machine that has a static IP.
-  - The user by which you connect should have the `sudo` ability.
-  - Only **Ubuntu** servers are supported right now.
-
-2. [Ansible](https://www.ansible.com/) installed on your local machine.
-
-## Get started
-
-```
-npm i hosty
+// 3. Deploy
+deploy(myVPS, database, api)
+run()
 ```
 
+This code will do the following:
+1. Connect to your server via SSH
+2. Create the postgres database
+3. Clone your repo, build and run it
+4. Configure the domain with https support
 
-**This package is still under development, not ready for use yet!**
+# Requirements
+**On local machine:**
+- [Ansible](https://www.ansible.com/) (tested with v2.16.6)
+- Nodejs (tested with v22.8)
+
+**On the server**
+- A Linux server that uses `apt` and `systemctl` (tested on Ubuntu 22.04)
+- A user with `sudo` ability (using the root user is not recommended)
+
+...

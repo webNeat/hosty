@@ -1,0 +1,20 @@
+/srv/hosty/
+  services/
+    db-foo/
+      compose.yaml
+      ...
+    app-foo/
+      .ports
+        local ports to use
+      compose.yaml
+      source.yaml
+        repo: 'repo url'
+        branch: 'deployed branch'
+        commit: 'last deployed commit hash'
+      Caddyfile
+      ...
+  backups/
+    db-foo/
+      yyyy-mm-dd_hh-mm-ss.sql.gz
+      ...
+

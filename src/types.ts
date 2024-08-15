@@ -1,4 +1,4 @@
-import { Role, Playbook } from './ansible/types.js'
+import { Tasks, Playbook } from './ansible/types.js'
 import * as compose from './compose.types.js'
 import { ChildProcess, SpawnOptions } from 'child_process'
 
@@ -26,20 +26,28 @@ export type DockerConnection = {
 
 export type ServerConfig = {
   name: string
-  ssh_key: {
+  ssh_key?: {
     path: string
     passphrase: string
   }
-  git_config: { name: string; email: string }
+  git_config?: { name?: string; email?: string }
   hosty_dir?: string
   docker_network?: string
+  docker_prefix?: string
   connection?: LocalConnection | SshConnection | DockerConnection
 }
 
-export type Server = Required<ServerConfig>
+export type Server = Required<ServerConfig> & {
+  services_dir: string
+  backups_dir: string
+  get_service_dir: (name: string) => string
+  get_backups_dir: (name: string) => string
+}
 
-export type Service = {
-  get_roles: (server: Server) => Role[]
+export type Service<Type extends string = string> = {
+  type: Type
+  get_deploy_tasks: (server: Server) => Tasks
+  get_destroy_tasks: (server: Server) => Tasks
 }
 
 export type ContainerConfig = {
@@ -47,32 +55,93 @@ export type ContainerConfig = {
   files_dir?: string
   files?: Record<string, string>
   compose: compose.Service
+  before_start?: string[]
 }
-export type Container = Service & ContainerConfig
+export type Container = Service<'container'> & ContainerConfig
 
-export type PostgresConfig = {
+export type Database = Postgres | MySQL | Redis
+
+export type PostgresConfig = Omit<ContainerConfig, 'compose'> & {
   version?: string
-  name: string
   user: string
   pass: string
   exposed_port?: number
+  config?: string
+  compose?: compose.Service
 }
-export type Postgres = Service &
-  PostgresConfig & {
-    host: string
-  }
+export type Postgres = Service<'db.postgres'> & PostgresConfig & { host: string; port: number }
 
-export type Assertions = Service
+export type MySQLConfig = Omit<ContainerConfig, 'compose'> & {
+  version?: string
+  user: string
+  pass: string
+  root_password: string
+  exposed_port?: number
+  config?: string
+  compose?: compose.Service
+}
+export type MySQL = Service<'db.mysql'> & MySQLConfig & { host: string; port: number }
+
+export type RedisConfig = Omit<ContainerConfig, 'compose'> & {
+  version?: string
+  exposed_port?: number
+  config?: string
+  compose?: compose.Service
+}
+export type Redis = Service<'db.redis'> & RedisConfig & { host: string; port: number }
+
+export type App = GitApp
+
+export type GitAppConfig = {
+  name: string
+  repo: string
+  branch: string
+  domain?: string
+  instances?: number
+  env?: Record<string, string>
+  compose?: compose.Service
+  before_start?: string[]
+  path?: string
+}
+
+export type GitApp = Service<'app.git'> & GitAppConfig
+
+export type CommandConfig = {
+  name: string
+  cmd: string
+  service?: Container | App | Database
+  cron?:
+    | 'annually'
+    | 'daily'
+    | 'hourly'
+    | 'monthly'
+    | 'reboot'
+    | 'weekly'
+    | 'yearly'
+    | {
+        minute?: number | string // 0 - 59
+        hour?: number | string // 0 - 23
+        day?: number | string // 1 - 31
+        weekday?: number | string // 0 - 6
+        month?: number | string // 1 - 12
+      }
+}
+
+export type Command = Service<'command'> & CommandConfig
+
+export type Assertions = Service<'assertions'>
 
 export type RunOptions = {
-  playbookPath: string
+  playbook_path: string
   ask_sudo_pass: boolean
   spawn_options: Partial<SpawnOptions>
+  ansible_options: string[]
 }
 
 export type HostyInstance = {
-  deploy: (server: Server, services: Service[]) => void
+  deploy: (server: Server, ...services: Service[]) => void
+  destroy: (server: Server, ...services: Service[]) => void
   playbook: () => Playbook
   write: (playbookPath: string) => Promise<void>
-  run: (options: Partial<RunOptions>) => Promise<ChildProcess>
+  run: (options?: Partial<RunOptions>) => Promise<ChildProcess>
 }
