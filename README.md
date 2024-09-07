@@ -56,4 +56,4 @@ This code will do the following:
 - A Linux server that uses `apt` and `systemctl` (tested on Ubuntu 22.04)
 - A user with `sudo` ability (using the root user is not recommended)
 
-...
+_The detailed documentation is coming soon ..._
