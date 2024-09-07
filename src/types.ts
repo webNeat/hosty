@@ -129,7 +129,7 @@ export type CommandConfig = {
 
 export type Command = Service<'command'> & CommandConfig
 
-export type Assertions = Service<'assertions'>
+export type TasksService = Service<'tasks'>
 
 export type RunOptions = {
   playbook_path: string

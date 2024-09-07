@@ -1,6 +1,8 @@
 import * as zx from 'zx'
 import { ChildProcess } from 'child_process'
-import { HostyInstance, Server, Service, assert, assertions, instance, server } from '../../src/index.js'
+import { HostyInstance, Server, Service, assertions, server, internals } from '../../src/index.js'
+
+const { instance, blocks: { assert } } = internals
 
 type Assert = {
   [K in keyof typeof assert]: (...args: Parameters<(typeof assert)[K]>) => void
