@@ -4,7 +4,7 @@ import { ChildProcess, SpawnOptions } from 'child_process'
 
 export type LocalConnection = {
   type: 'local'
-  user?: string
+  user: string
   password?: string
 }
 
@@ -12,7 +12,7 @@ export type SshConnection = {
   type: 'ssh'
   address: string
   port?: number
-  user?: string
+  user: string
   password?: string
   private_key_path?: string
 }
@@ -20,7 +20,7 @@ export type SshConnection = {
 export type DockerConnection = {
   type: 'docker'
   container: string
-  user?: string
+  user: string
   password?: string
 }
 

@@ -1,11 +1,11 @@
-name: PR checks
+name: Tests
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
 jobs:
-  check_pr:
+  functional_tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

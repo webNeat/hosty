@@ -1,13 +1,15 @@
+import os from 'os'
 import path from 'path'
 import { Host } from './ansible/types.js'
 import * as blocks from './blocks/index.js'
 import { Server, ServerConfig } from './types.js'
 
 export function server(config: ServerConfig): Server {
+  const user = os.userInfo().username
   let connection = config.connection
   if (!connection) {
-    if (config.name === 'localhost') connection = { type: 'local', user: process.env.USER }
-    else connection = { type: 'ssh', address: config.name }
+    if (config.name === 'localhost') connection = { type: 'local', user }
+    else connection = { type: 'ssh', address: config.name, user }
   }
   const hosty_dir = config.hosty_dir || '/srv/hosty'
   const backups_dir = path.join(hosty_dir, 'backups')
