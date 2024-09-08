@@ -13,10 +13,10 @@ export function set_available_ports(service_dir: string, count: number, var_name
     desired_count=${count}
 
     # Read existing ports from the file, if it exists
-    if [ -f ${port_file} ]; then
+    if [ -f "${port_file}" ]; then
         while IFS= read -r line; do
             existing_ports+=("$line")
-        done < ${port_file}
+        done < "${port_file}"
     fi
 
     # Add existing ports to the final list
@@ -45,9 +45,9 @@ export function set_available_ports(service_dir: string, count: number, var_name
     fi
 
     # Write the ports to the file, one per line
-    > ${port_file}  # Clear the file before writing
+    > "${port_file}"  # Clear the file before writing
     for port in "\${ports[@]}"; do
-        echo "$port" >> ${port_file}
+        echo "$port" >> "${port_file}"
     done
   `
   return block(`Generate ${count} available ports for ${service_dir} into the var ${var_name}`, {}, [
