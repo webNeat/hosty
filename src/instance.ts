@@ -1,3 +1,4 @@
+import os from 'os'
 import path from 'path'
 import YAML from 'yaml'
 import { spawn } from 'child_process'
@@ -56,7 +57,8 @@ export function instance(): HostyInstance {
   }
 
   const run = async (userOptions: Partial<RunOptions> = {}) => {
-    const options = { ...defaultRunOptions, ...userOptions }
+    const playbook_path = path.join(os.tmpdir(), [process.pid, Date.now(), Math.floor(1000 * Math.random())].join('_') + '.yaml')
+    const options = { ...defaultRunOptions, playbook_path, ...userOptions }
     await write(options.playbook_path)
     const args = [options.playbook_path]
     if (options.ask_sudo_pass) args.push('-K')

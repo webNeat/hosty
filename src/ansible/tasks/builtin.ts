@@ -39,7 +39,7 @@ export function template(name: string, attrs: TemplateAttrs, common: CommonTaskA
   return { name, 'ansible.builtin.template': attrs, ...common }
 }
 
-export type CopyAttrs = { src: string; dest: string } | { content: string; dest: string }
+export type CopyAttrs = ({ src: string } | { content: string }) & { dest: string; owner?: string; mode?: string }
 export function copy(name: string, attrs: CopyAttrs, common: CommonTaskAttrs = {}): Task<'ansible.builtin.copy', CopyAttrs> {
   return { name, 'ansible.builtin.copy': attrs, ...common }
 }
@@ -115,4 +115,17 @@ export function assert(name: string, attrs: AssertAttrs, common: CommonTaskAttrs
 export type DebugAttrs = { msg?: string | string[]; var?: string; verbosity?: number }
 export function debug(name: string, attrs: DebugAttrs, common: CommonTaskAttrs = {}): Task<'ansible.builtin.debug', DebugAttrs> {
   return { name, 'ansible.builtin.debug': attrs, ...common }
+}
+
+export type UserAttrs = {
+  name: string
+  password: string
+  state: 'present' | 'absent'
+  shell: string
+  groups?: string[]
+  create_home?: boolean
+  home?: string
+}
+export function user(name: string, attrs: UserAttrs, common: CommonTaskAttrs = {}): Task<'ansible.builtin.user', UserAttrs> {
+  return { name, 'ansible.builtin.user': attrs, ...common }
 }

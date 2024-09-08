@@ -1,6 +1,6 @@
 {
   "name": "hosty",
-  "version": "0.0.1-alpha.5",
+  "version": "0.0.1-alpha.6",
   "description": "A code based opinionated way to self-host and manage web apps.",
   "type": "module",
   "main": "dist/index.js",
