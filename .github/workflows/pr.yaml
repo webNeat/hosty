@@ -2,6 +2,8 @@ name: PR checks
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
 jobs:
   check_pr:
     runs-on: ubuntu-latest
