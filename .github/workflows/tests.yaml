@@ -1,17 +1,21 @@
 name: Tests
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
+    paths-ignore: ['docs/**', '**/README.md']
+  pull_request:
+    paths-ignore: ['docs/**', '**/README.md']
 jobs:
-  functional_tests:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3.0.0
+      - uses: actions/setup-node@v4
         with:
+          cache: pnpm
+          check-latest: true
           node-version: 22
-      - run: npm i
-      - run: npm run build
-      - run: npm test
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run -r build
+      - run: pnpm run -r test

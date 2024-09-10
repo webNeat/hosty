@@ -1,0 +1,16 @@
+{
+  "name": "hosty-action",
+  "version": "0.0.1-alpha.1",
+  "description": "Github action to automate deployments with hosty",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Done'",
+    "test": "echo 'Done'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "hosty": "workspace:*"
+  }
+}
