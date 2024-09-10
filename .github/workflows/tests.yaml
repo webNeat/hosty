@@ -6,16 +6,41 @@ on:
   pull_request:
     paths-ignore: ['docs/**', '**/README.md']
 jobs:
-  test:
+  get-hosty-test-files:
+    runs-on: ubuntu-latest
+    outputs:
+      test-files: ${{ steps.set-matrix.outputs.test-files }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set-matrix
+        run: echo "test-files=$(cd packages/hosty && ls tests/*.test.ts | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+
+  test-hosty:
+    needs: [get-hosty-test-files]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-file: ${{fromJson(needs.get-hosty-test-files.outputs.test-files)}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run --filter hosty build
+      - run: pnpm run --filter hosty test ${{matrix.test-file}}
+
+  test-hosty-action:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3.0.0
       - uses: actions/setup-node@v4
         with:
-          cache: pnpm
-          check-latest: true
           node-version: 22
+          cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run -r build
-      - run: pnpm run -r test
+      - run: pnpm run --filter hosty-action build
+      - run: pnpm run --filter hosty-action test
