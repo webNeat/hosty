@@ -1,12 +1,13 @@
 import { test } from './utils/index.js'
 import { app, db } from '../src/index.js'
 
-test('app: node + postgres', async ({ deploy, destroy, assert }) => {
+test('app: express + postgres', async ({ deploy, destroy, assert }) => {
   const database = db.postgres({ name: 'todo-db', user: 'tasks_user', pass: 'tasks_pass' })
   const todo_app = app.git({
     name: 'todo',
-    repo: 'https://github.com/webNeat/hosty-test-apps.git',
-    branch: 'node-postgres',
+    repo: 'https://github.com/webNeat/hosty.git',
+    branch: 'main',
+    path: 'examples/node-express-postgres',
     domain: 'todo.local',
     env: {
       APP_PORT: '80',

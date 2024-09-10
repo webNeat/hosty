@@ -4,17 +4,17 @@ import { app } from '../src/index.js'
 test('app: monorepo rust + nextjs', async ({ deploy, destroy, assert }) => {
   const api = app.git({
     name: 'rust-api',
-    repo: 'https://github.com/webNeat/hosty-test-apps.git',
-    branch: 'monorepo',
-    path: 'api',
+    repo: 'https://github.com/webNeat/hosty.git',
+    branch: 'main',
+    path: 'examples/rust-actix-web',
     domain: 'rust-api.local',
   })
 
   const web = app.git({
     name: 'next-web',
-    repo: 'https://github.com/webNeat/hosty-test-apps.git',
-    branch: 'monorepo',
-    path: 'web',
+    repo: 'https://github.com/webNeat/hosty.git',
+    branch: 'main',
+    path: 'examples/node-nextjs',
     domain: 'next-web.local',
     env: {
       PORT: '80',

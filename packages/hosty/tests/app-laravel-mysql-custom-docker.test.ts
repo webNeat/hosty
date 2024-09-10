@@ -5,8 +5,9 @@ test('app: laravel + mysql + custom dockerfile', async ({ deploy, destroy, asser
   const database = db.mysql({ name: 'laravel-db', user: 'laravel_user', pass: 'laravel_pass', root_password: 'supersecretpass' })
   const laravel_app = app.git({
     name: 'laravel-app',
-    repo: 'https://github.com/webNeat/hosty-test-apps.git',
-    branch: 'laravel-mysql',
+    repo: 'https://github.com/webNeat/hosty.git',
+    branch: 'main',
+    path: 'examples/php-laravel-mysql',
     domain: 'laravel.local',
     env: {
       APP_NAME: 'Laravel App',

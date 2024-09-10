@@ -4,8 +4,9 @@ import { app, command } from '../src/index.js'
 test('app: adonis + migrations + custom dockerfile', async ({ deploy, destroy, assert }) => {
   const api = app.git({
     name: 'adonis-api',
-    repo: 'https://github.com/webNeat/hosty-test-apps.git',
-    branch: 'adonis-sqlite',
+    repo: 'https://github.com/webNeat/hosty.git',
+    branch: 'main',
+    path: 'examples/node-adonis-sqlite',
     domain: 'adonis-api.local',
     compose: {
       volumes: ['./storage:/app/storage'],
