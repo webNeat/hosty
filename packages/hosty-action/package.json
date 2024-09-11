@@ -1,16 +1,23 @@
 {
   "name": "hosty-action",
-  "version": "0.0.1-alpha.1",
   "description": "Github action to automate deployments with hosty",
+  "private": true,
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "echo 'Done'",
+    "build": "ncc build src/index.ts -o dist --source-map",
     "test": "echo 'Done'"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@actions/core": "^1.10.1",
     "hosty": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@vercel/ncc": "^0.38.1",
+    "typescript": "^5.6.2"
   }
 }

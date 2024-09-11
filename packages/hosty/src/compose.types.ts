@@ -25,7 +25,7 @@ export type Service = {
   dns_search?: string | string[]
   domainname?: string
   entrypoint?: string | string[]
-  environment?: Record<string, string | null>
+  environment?: Record<string, string | null> | string[]
   expose?: string[]
   extends?: string | { file: string; service: string }
   external_links?: string[]
@@ -39,7 +39,7 @@ export type Service = {
   labels?: Record<string, string>
   links?: string[]
   logging?: Logging
-  networks?: string[]
+  networks?: Array<string | NetworkReference>
   pid?: string
   ports?: Array<string | Port>
   privileged?: boolean
@@ -147,7 +147,7 @@ export type PlacementPreference = {
 }
 
 export type Healthcheck = {
-  test: string[]
+  test?: string[]
   interval?: string
   timeout?: string
   retries?: number

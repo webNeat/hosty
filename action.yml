@@ -1,0 +1,21 @@
+name: Hosty
+description: Automate your deployments with ease
+inputs:
+  server_ip:
+    description: The IP address of the server
+    required: true
+  server_user:
+    description: The username to use to connect to the server
+    required: true
+  ssh_private_key:
+    description: The private ssh key to use to connect to the server
+    required: true
+  server_user_sudo_pass:
+    description: The sudo password of the user on the server
+    required: true
+  handler:
+    description: a JS file that exports the action to perform and services to deploy/destroy.
+    required: true
+runs:
+  using: node20
+  main: packages/hosty-action/dist/index.js
