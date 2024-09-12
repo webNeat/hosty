@@ -34,12 +34,15 @@ runs:
   - name: Verify Ansible installation
     run: ansible-playbook --version
     shell: bash
+  - run: echo '${{ toJson(github.event) }}'
+    shell: bash
   - name: Run deployment
     env:
       hosty_server_ip: ${{ inputs.server_ip }}
       hosty_server_user: ${{ inputs.server_user }}
       hosty_repo: ${{ github.repository }}
       hosty_branch: ${{ github.event_name == 'delete' && github.event.ref || github.head_ref || github.ref_name }}
+      hosty_event: ${{ toJson(github.event) }}
     run: node ${{ inputs.handler }}
     shell: bash
   - run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml
