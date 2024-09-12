@@ -1,5 +1,5 @@
 import { RunOptions, Server } from './types.js'
-import { run as raw_run } from './instance.js'
+import { write } from './instance.js'
 import { server as raw_server } from './server.js'
 
 export function server(): Server {
@@ -15,14 +15,8 @@ export function server(): Server {
   })
 }
 
-export async function run(options: Partial<RunOptions> = {}) {
-  const sudo_pass = process.env.hosty_server_sudo_pass
-  if (!sudo_pass) error('server_sudo_pass')
-
-  options.spawn_options ||= {}
-  options.spawn_options.env ||= {}
-  options.spawn_options.env.ANSIBLE_BECOME_PASS = sudo_pass
-  return raw_run(options)
+export async function run() {
+  return write('hosty-playbook.yaml')
 }
 
 function error(var_name: string) {

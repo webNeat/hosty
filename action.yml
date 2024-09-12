@@ -38,10 +38,9 @@ runs:
     env:
       hosty_server_ip: ${{ inputs.server_ip }}
       hosty_server_user: ${{ inputs.server_user }}
-      hosty_server_sudo_pass: ${{ inputs.server_sudo_pass }}
       hosty_repo: ${{ github.repository }}
       hosty_branch: ${{ github.event_name == 'delete' && github.event.ref || github.head_ref || github.ref_name }}
     run: node ${{ inputs.handler }}
     shell: bash
-  - run: ansible-playbook hosty-playbook.yaml
+  - run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml
     shell: bash
