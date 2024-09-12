@@ -51,14 +51,14 @@ runs:
       hosty_server_user: ${{ inputs.server_user }}
       hosty_repo: ${{ github.repository }}
       hosty_branch: ${{ github.event_name == 'delete' && github.event.ref || github.head_ref || github.ref_name }}
-      hosty_event: ${{ toJson(github.event) }}
+      hosty_event: ${{ github.event_name }}
     run: node ${{ inputs.handler }}
     shell: bash
   - if: inputs.verbose
     run: cat hosty-playbook.yaml
     shell: bash
   - if: inputs.verbose == true
-    run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml -v
+    run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml -vvv
     shell: bash
   - if: inputs.verbose != true
     run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml

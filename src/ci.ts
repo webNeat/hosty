@@ -2,6 +2,8 @@ import { RunOptions, Server } from './types.js'
 import { write } from './instance.js'
 import { server as raw_server } from './server.js'
 
+type GithubEventName = 'push' | 'pull_request' | 'delete' | 'create' | 'issue' | 'workflow_dispatch' | 'schedule' | 'release' | 'fork' | 'star'
+
 export function server(): Server {
   const address = process.env.hosty_server_ip!
   const user = process.env.hosty_server_user!
@@ -29,13 +31,9 @@ export function branch() {
 }
 
 export function event() {
-  try {
-    const e = JSON.parse(process.env.hosty_event!)
-    if (!e) var_error('github.event')
-    return e
-  } catch {
-    var_error('github.event')
-  }
+  const name = process.env.hosty_event
+  if (!name) var_error('github.event_name')
+  return name as GithubEventName
 }
 
 export async function run() {
