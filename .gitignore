@@ -1,2 +1,6 @@
-archive
+*.log
+.DS_Store
 node_modules
+dist
+.tests
+archive
