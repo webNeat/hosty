@@ -1,5 +1,42 @@
 {
-  "name": "@hosty/workspace",
-  "private": true,
-  "packageManager": "pnpm@9.10.0"
+  "name": "hosty",
+  "version": "0.0.1-alpha.10",
+  "description": "A code based opinionated way to self-host and manage web apps.",
+  "type": "module",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --import tsx test.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webNeat/hosty.git"
+  },
+  "keywords": [
+    "self-hosting",
+    "ansible",
+    "docker",
+    "caddy",
+    "containers",
+    "deployment"
+  ],
+  "author": "Amine Ben hammou (@webNeat)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webNeat/hosty/issues"
+  },
+  "homepage": "https://github.com/webNeat/hosty",
+  "devDependencies": {
+    "@types/node": "^20.16.5",
+    "prettier": "^3.2.5",
+    "tsx": "^4.10.5",
+    "typescript": "^5.4.5",
+    "zx": "^8.1.4"
+  },
+  "dependencies": {
+    "yaml": "^2.4.5"
+  }
 }

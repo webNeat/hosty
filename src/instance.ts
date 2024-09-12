@@ -13,14 +13,7 @@ type State = {
   actions: Action[]
 }
 
-const defaultRunOptions: RunOptions = {
-  ask_sudo_pass: true,
-  playbook_path: 'hosty-playbook.yaml',
-  spawn_options: {
-    stdio: 'inherit',
-  },
-  ansible_options: [],
-}
+export const { deploy, destroy, playbook, write, run } = instance()
 
 export function instance(): HostyInstance {
   const state: State = {
@@ -67,6 +60,15 @@ export function instance(): HostyInstance {
   }
 
   return { deploy, destroy, playbook, write, run }
+}
+
+const defaultRunOptions: RunOptions = {
+  ask_sudo_pass: true,
+  playbook_path: 'hosty-playbook.yaml',
+  spawn_options: {
+    stdio: 'inherit',
+  },
+  ansible_options: [],
 }
 
 function setup_servers(servers: Server[], steps: ansible.Step[]) {
