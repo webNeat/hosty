@@ -18,7 +18,6 @@ inputs:
     required: true
   verbose:
     description: Show additional debug information
-    default: 'false'
 runs:
   using: composite
   steps:
@@ -29,21 +28,13 @@ runs:
   - name: Add VPS to known_hosts
     run: ssh-keyscan -H ${{ inputs.server_ip }} >> ~/.ssh/known_hosts
     shell: bash
-  - name: Install Ansible
-    run: |
-      python -m pip install --upgrade pip
-      pip install ansible
-    shell: bash
-  - name: Verify Ansible installation
-    run: ansible-playbook --version
-    shell: bash
   - if: inputs.verbose
     run: |
       echo 'hosty_server_ip: ${{ inputs.server_ip }}'
       echo 'hosty_server_user: ${{ inputs.server_user }}'
       echo 'hosty_repo: ${{ github.repository }}'
       echo 'hosty_branch: ${{ github.event_name == 'delete' && github.event.ref || github.head_ref || github.ref_name }}'
-      echo 'hosty_event: ${{ toJson(github.event) }}'
+      echo 'hosty_event: ${{ github.event_name }}'
     shell: bash
   - name: Run deployment
     env:
@@ -57,9 +48,5 @@ runs:
   - if: inputs.verbose
     run: cat hosty-playbook.yaml
     shell: bash
-  - if: inputs.verbose == true
-    run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml -vvv
-    shell: bash
-  - if: inputs.verbose != true
-    run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml
+  - run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml ${{ inputs.verbose && '-v' }}
     shell: bash
