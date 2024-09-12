@@ -16,6 +16,9 @@ inputs:
   handler:
     description: The Javascript file to run
     required: true
+  verbose:
+    description: Show additional debug information
+    default: 'false'
 runs:
   using: composite
   steps:
@@ -34,7 +37,13 @@ runs:
   - name: Verify Ansible installation
     run: ansible-playbook --version
     shell: bash
-  - run: echo '${{ toJson(github.event) }}'
+  - if: inputs.verbose
+    run: |
+      echo 'hosty_server_ip: ${{ inputs.server_ip }}'
+      echo 'hosty_server_user: ${{ inputs.server_user }}'
+      echo 'hosty_repo: ${{ github.repository }}'
+      echo 'hosty_branch: ${{ github.event_name == 'delete' && github.event.ref || github.head_ref || github.ref_name }}'
+      echo 'hosty_event: ${{ toJson(github.event) }}'
     shell: bash
   - name: Run deployment
     env:
@@ -45,5 +54,12 @@ runs:
       hosty_event: ${{ toJson(github.event) }}
     run: node ${{ inputs.handler }}
     shell: bash
-  - run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml
+  - if: inputs.verbose
+    run: cat hosty-playbook.yaml
+    shell: bash
+  - if: inputs.verbose == true
+    run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml -v
+    shell: bash
+  - if: inputs.verbose != true
+    run: ANSIBLE_BECOME_PASS=${{ inputs.server_sudo_pass }} ansible-playbook hosty-playbook.yaml
     shell: bash
