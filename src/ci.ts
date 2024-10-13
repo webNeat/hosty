@@ -38,7 +38,7 @@ export function event() {
 
 export function vars() {
   try {
-    return JSON.parse(process.env.hosty_env || '{}')
+    return JSON.parse(process.env.hosty_vars || '{}')
   } catch {
     throw `webNeat/hosty: Could not parse the given 'vars' as JSON, make sure you serialize the passed values into a JSON string`
   }
