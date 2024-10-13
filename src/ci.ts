@@ -1,4 +1,4 @@
-import { RunOptions, Server } from './types.js'
+import { Server } from './types.js'
 import { write } from './instance.js'
 import { server as raw_server } from './server.js'
 
@@ -8,8 +8,8 @@ export function server(): Server {
   const address = process.env.hosty_server_ip!
   const user = process.env.hosty_server_user!
 
-  if (!address) input_error('server_ip')
-  if (!user) input_error('server_user')
+  if (!address) var_error('server_ip')
+  if (!user) var_error('server_user')
 
   return raw_server({
     name: 'ci_server',
@@ -36,12 +36,16 @@ export function event() {
   return name as GithubEventName
 }
 
-export async function run() {
-  return write('hosty-playbook.yaml')
+export function vars() {
+  try {
+    return JSON.parse(process.env.hosty_env || '{}')
+  } catch {
+    throw `webNeat/hosty: Could not parse the given 'vars' as JSON, make sure you serialize the passed values into a JSON string`
+  }
 }
 
-function input_error(var_name: string) {
-  throw `The ${var_name} input of the Github action is missing. Make sure your are using the 'webNeat/hosty' action to run this script`
+export async function run() {
+  return write('hosty-playbook.yaml')
 }
 
 function var_error(var_name: string) {

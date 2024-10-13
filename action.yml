@@ -18,6 +18,8 @@ inputs:
     required: true
   verbose:
     description: Show additional debug information
+  vars:
+    description: Additional variables to pass to the deployment script
 runs:
   using: composite
   steps:
@@ -43,6 +45,7 @@ runs:
       hosty_repo: ${{ github.repository }}
       hosty_branch: ${{ github.event_name == 'delete' && github.event.ref || github.head_ref || github.ref_name }}
       hosty_event: ${{ github.event_name }}
+      hosty_vars: ${{ inputs.vars }}
     run: node ${{ inputs.handler }}
     shell: bash
   - if: inputs.verbose
