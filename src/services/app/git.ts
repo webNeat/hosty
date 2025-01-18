@@ -30,6 +30,7 @@ function get_deploy_tasks(server: Server, config: GitAppConfig): Tasks {
       image_name: config.name,
       facts: { source_changed: 'source_changed' },
       path: config.path,
+      env: config.env,
     }),
   )
 
