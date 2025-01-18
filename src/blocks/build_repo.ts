@@ -14,6 +14,7 @@ type Config = {
     source_changed: string
   }
   path?: string
+  env?: Record<string, string>
 }
 
 export function build_repo(config: Config): Block {
@@ -30,6 +31,16 @@ export function build_repo(config: Config): Block {
     builtin.git(
       `Clone the repo`,
       { repo: config.repo_url, version: config.branch, accept_hostkey: true, dest: '{{clone_dir.path}}' },
+      { when: 'source_file.changed' },
+    ),
+    builtin.copy(
+      `Create .env file`,
+      {
+        content: Object.entries(config.env || {})
+          .map(([key, value]) => `${key}=${value}`)
+          .join('\n'),
+        dest: path.join(build_path, '.env'),
+      },
       { when: 'source_file.changed' },
     ),
     builtin.stat(`Check if Dockerfile exists`, { path: path.join(build_path, 'Dockerfile') }, { register: 'dockerfile', when: 'source_file.changed' }),

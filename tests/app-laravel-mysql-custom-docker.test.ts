@@ -10,9 +10,9 @@ test('app: laravel + mysql + custom dockerfile', async ({ deploy, destroy, asser
     path: 'examples/php-laravel-mysql',
     domain: 'laravel.local',
     env: {
-      APP_NAME: 'Laravel App',
+      APP_NAME: '"Laravel App"',
       APP_ENV: 'production',
-      APP_KEY: 'base64:MwtP4zRRiQnznkVkAPbKwwB9768wKSwHp4hYF7P5B8k=',
+      APP_KEY: '"base64:MwtP4zRRiQnznkVkAPbKwwB9768wKSwHp4hYF7P5B8k="',
       APP_DEBUG: 'true',
       APP_TIMEZONE: 'UTC',
       APP_PORT: '80',
