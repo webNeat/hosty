@@ -45,7 +45,13 @@ function get_deploy_tasks(server: Server, config: GitAppConfig): Tasks {
   tasks.push(service)
 
   if (config.domain) {
-    tasks.push(blocks.create_domain({ domain: config.domain, ports_var: 'app_ports', caddyfile_path: path.join(service_dir, 'Caddyfile') }))
+    tasks.push(
+      ...server.reverse_proxy.get_service_tasks(server, {
+        service_name: config.name,
+        domain: config.domain,
+        local_urls: `{{ app_ports | map('regex_replace', '^', '127.0.0.1:') | join(' ') }}`,
+      }),
+    )
   }
   return tasks
 }
@@ -68,10 +74,10 @@ function make_composes(config: GitAppConfig) {
   compose.ports ||= []
 
   const composes = []
-  for (let i = 1; i <= config.instances!; i++) {
+  for (let i = 0; i < config.instances!; i++) {
     composes.push({
       ...compose,
-      ports: [...compose.ports, `{{app_ports[${i - 1}]}}:80`],
+      ports: [...compose.ports, `{{app_ports[${i}]}}:80`],
     })
   }
   return composes
