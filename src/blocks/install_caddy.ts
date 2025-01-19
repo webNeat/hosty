@@ -1,8 +1,12 @@
+import { block } from './block.js'
 import { Block } from '../ansible/types.js'
 import { builtin } from '../ansible/tasks/index.js'
-import { block } from './block.js'
 
-export function install_caddy(caddyfiles_pattern: string): Block {
+type Config = {
+  caddyfile_content: string
+}
+
+export function install_caddy(config: Config): Block {
   return block(`Install Caddy`, {}, [
     builtin.apt(
       `Install Caddy's dependencies`,
@@ -26,14 +30,7 @@ export function install_caddy(caddyfiles_pattern: string): Block {
     ),
     builtin.apt(`Update apt cache`, { update_cache: true }, { become: true }),
     builtin.apt(`Install Caddy`, { name: 'caddy', state: 'present' }, { become: true }),
-    builtin.copy(
-      `Configure Caddy`,
-      {
-        dest: '/etc/caddy/Caddyfile',
-        content: `import ${caddyfiles_pattern}\n`,
-      },
-      { become: true },
-    ),
+    builtin.copy(`Configure Caddy`, { dest: '/etc/caddy/Caddyfile', content: config.caddyfile_content }, { become: true }),
     builtin.command(`Reload Caddy config`, { cmd: `sudo systemctl start caddy` }, { become: true }),
   ]).get()
 }

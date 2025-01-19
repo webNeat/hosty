@@ -1,7 +1,7 @@
 export * as assert from './assert.js'
 export * from './build_repo.js'
 export * from './create_directory.js'
-export * from './create_domain.js'
+export * from './create_caddy_domain.js'
 export * from './create_service.js'
 export * from './delete_directory.js'
 export * from './delete_docker_image.js'

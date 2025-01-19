@@ -1,0 +1,5 @@
+{{domain}} {
+  reverse_proxy {{local_urls}} {
+    lb_policy client_ip_hash
+  }
+}
