@@ -1,0 +1,11 @@
+{
+	log {
+		format json
+		output file {{log_path}} {
+			roll_size 10mb
+			roll_keep 10
+		}
+	}
+}
+
+import {{service_caddyfiles_pattern}}
