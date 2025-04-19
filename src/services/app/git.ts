@@ -17,11 +17,6 @@ function get_deploy_tasks(server: Server, config: GitAppConfig): Tasks {
   config.instances ||= 1
   const tasks: Tasks = []
   const service_dir = path.join(server.hosty_dir, 'services', config.name)
-
-  if (config.domain) {
-    tasks.push(blocks.set_available_ports(service_dir, config.instances, 'app_ports'))
-  }
-
   tasks.push(
     blocks.build_repo({
       repo_url: config.repo,
@@ -49,7 +44,7 @@ function get_deploy_tasks(server: Server, config: GitAppConfig): Tasks {
       ...server.reverse_proxy.get_service_tasks(server, {
         service_name: config.name,
         domain: config.domain,
-        local_urls: `{{ app_ports | map('regex_replace', '^', '127.0.0.1:') | join(' ') }}`,
+        instances: config.instances,
       }),
     )
   }
@@ -71,14 +66,10 @@ function make_composes(config: GitAppConfig) {
   const compose = config.compose || {}
   compose.image = config.name
   compose.environment = { ...(config.env || {}), ...(compose.environment || {}) }
-  compose.ports ||= []
 
-  const composes = []
+  const composes: (typeof compose)[] = []
   for (let i = 0; i < config.instances!; i++) {
-    composes.push({
-      ...compose,
-      ports: [...compose.ports, `{{app_ports[${i}]}}:80`],
-    })
+    composes.push({ ...compose })
   }
   return composes
 }

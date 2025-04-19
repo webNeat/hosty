@@ -1,12 +1,14 @@
 proxies:
   ✔ make the proxy configurable @done
-  ✔ add caddy proxy (default) @done
-  ☐ add nginx proxy
+  ✔ add caddy proxy as container (default) @done
+  ☐ add nginx proxy as container
+
+server setup:
+  ☐ use ufw to only allow ssh, http and https
 
 monitoring:
   ☐ make monitoring configurable
   ☐ add vector (default)
-  ☐ add fluentbit?
 
 databases:
   ☐ mongodb
@@ -23,5 +25,6 @@ github actions:
     how to duplicate related containers like db?
 
 test apps:
+  ☐ Nestjs
   ☐ Remix
   ☐ Wordpress

@@ -25,6 +25,7 @@ test('app: monorepo rust + nextjs', async ({ deploy, destroy, assert }) => {
   deploy(api, web)
   assert.command(`docker ps --filter "name=rust-api-1"`, { stdout_contains: 'rust-api-1' }, { become: true })
   assert.command(`docker ps --filter "name=next-web-1"`, { stdout_contains: 'next-web-1' }, { become: true })
+  assert.command(`sleep 10`, { success: true })
   assert.command(`curl -k https://rust-api.local/greet/foo`, { success: true, stdout: '{"hello":"foo"}' })
   assert.command(`curl -k https://rust-api.local/fibonacci/10`, { success: true, stdout: '{"value":55}' })
   assert.command(`curl -k https://next-web.local`, { success: true, stdout_contains: '<h1>Fibonacci of <!-- -->1<!-- --> is <!-- -->1</h1>' })

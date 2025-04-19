@@ -16,6 +16,5 @@ export function create_caddy_domain(config: Config): Block {
       { become: true },
     ),
     builtin.copy(`Create Caddyfile for ${config.domain}`, { dest: config.caddyfile_path, content: config.caddyfile_content }, { register: 'caddyfile' }),
-    builtin.command(`Reload caddy`, { cmd: `sudo systemctl reload caddy` }, { become: true, when: 'caddyfile.changed' }),
   ]).get()
 }

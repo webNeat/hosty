@@ -15,14 +15,12 @@ export function server(config: ServerConfig): Server {
   const hosty_dir = config.hosty_dir || '/srv/hosty'
   const backups_dir = path.join(hosty_dir, 'backups')
   const services_dir = path.join(hosty_dir, 'services')
-  const logs_dir = path.join(hosty_dir, 'logs')
 
   return {
     connection,
     hosty_dir,
     backups_dir,
     services_dir,
-    logs_dir,
     name: config.name,
     ssh_key: config.ssh_key || { path: '~/.ssh/id_rsa', passphrase: '' },
     git_config: config.git_config || {},
@@ -63,7 +61,6 @@ export function get_setup_tasks(server: Server) {
     blocks.generate_ssh_key(server.ssh_key),
     blocks.install_nixpacks(),
     blocks.create_directory(server.hosty_dir),
-    blocks.create_directory(server.logs_dir, { mode: '0777' }),
     ...server.reverse_proxy.get_server_tasks(server),
   ]
 }

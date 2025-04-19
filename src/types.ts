@@ -47,7 +47,7 @@ export type ReverseProxy = {
 export type ReverseProxyConfig = {
   service_name: string
   domain: string
-  local_urls: string
+  instances: number
 }
 
 export type CaddyConfig = {
@@ -58,7 +58,6 @@ export type CaddyConfig = {
 export type Server = Required<ServerConfig> & {
   services_dir: string
   backups_dir: string
-  logs_dir: string
   get_service_dir: (name: string) => string
   get_backups_dir: (name: string) => string
 }

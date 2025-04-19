@@ -20,6 +20,7 @@ test('app: express + postgres', async ({ deploy, destroy, assert }) => {
 
   deploy(database, todo_app)
   assert.command(`docker ps --filter "name=todo-1"`, { stdout_contains: 'todo-1' }, { become: true })
+  assert.command(`sleep 10`, { success: true })
   assert.command(`curl -k https://todo.local`, { success: true, stdout: '[]' })
   assert.command(`curl -k -X POST https://todo.local -H "Content-Type: application/json" -d '{"content":"first task"}'`, {
     success: true,
