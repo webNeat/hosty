@@ -71,11 +71,11 @@ export function file(path: string, assertions: FileAsserts): Block {
   const x = block(`Assert file: ${path}`)
   x.add(builtin.stat(`Get file stat for '${path}'`, { path }, { register: 'file' }))
   if (assertions.exists === false) {
-    x.add(builtin.assert(`File '${path}' exists`, { that: 'not file.stat.exists' }))
+    x.add(builtin.assert(`File '${path}' doesn't exist`, { that: 'not file.stat.exists' }))
   }
   if (assertions.exists === true) {
     x.add(builtin.assert(`File '${path}' exists`, { that: 'file.stat.exists' }))
-    builtin.assert(`File '${path}' is a file`, { that: 'file.stat.isreg' })
+    x.add(builtin.assert(`File '${path}' is a file`, { that: 'file.stat.isreg' }))
   }
   if (assertions.owner) {
     x.add(builtin.assert(`File '${path}' is owned by '${assertions.owner}'`, { that: `file.stat.pw_name == '${assertions.owner}'` }))
