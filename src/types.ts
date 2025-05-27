@@ -28,7 +28,7 @@ export type ServerConfig = {
   name: string
   ssh_key?: {
     path: string
-    passphrase: string
+    passphrase?: string
   }
   git_config?: { name?: string; email?: string }
   hosty_dir?: string

@@ -8,7 +8,11 @@ type Config = {
 
 export function delete_domain({ domain, caddyfile_path }: Config) {
   return block(`Delete domain ${domain}`, {}, [
-    builtin.lineinfile(`Remove ${domain} from /etc/hosts`, { path: '/etc/hosts', line: `127.0.0.1 ${domain}`, state: 'absent' }, { become: true }),
+    builtin.lineinfile(
+      `Remove ${domain} from /etc/hosts`,
+      { path: '/etc/hosts', line: `127.0.0.1 ${domain}`, state: 'absent', unsafe_writes: true },
+      { become: true },
+    ),
     builtin.file(`Delete Caddyfile for ${domain}`, { path: caddyfile_path, state: 'absent' }, { register: 'caddyfile' }),
     builtin.command(`Reload caddy`, { cmd: `sudo systemctl reload caddy` }, { become: true, when: 'caddyfile.changed' }),
   ]).get()

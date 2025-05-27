@@ -5,7 +5,7 @@ import { block } from './block.js'
 
 type Config = {
   path: string
-  passphrase: string
+  passphrase?: string
 }
 
 export function generate_ssh_key({ path, passphrase }: Config): Block {

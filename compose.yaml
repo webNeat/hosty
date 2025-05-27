@@ -1,0 +1,7 @@
+services:
+  hosty:
+    build: .
+    privileged: true
+    volumes:
+      - .:/app
+    working_dir: /app

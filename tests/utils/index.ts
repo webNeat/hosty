@@ -78,7 +78,7 @@ async function run_test_case({ name, fn }: TestCase) {
   const container = server({
     name: 'localhost',
     connection: { type: 'local', user },
-    ssh_key: { path: '~/.ssh/id_rsa', passphrase: '' },
+    ssh_key: { path: '~/.ssh/id_rsa' },
     git_config: { name: 'Amine Ben hammou', email: 'webneat@gmail.com' },
   })
   const test_instance = instance()

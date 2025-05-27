@@ -24,7 +24,7 @@ export function file(name: string, attrs: FileAttrs, common: CommonTaskAttrs = {
   return { name, 'ansible.builtin.file': attrs, ...common }
 }
 
-export type LineInFileAttrs = { path: string; line: string; state: 'present' | 'absent' }
+export type LineInFileAttrs = { path: string; line: string; state: 'present' | 'absent'; unsafe_writes?: boolean }
 export function lineinfile(name: string, attrs: LineInFileAttrs, common: CommonTaskAttrs = {}): Task<'ansible.builtin.lineinfile', LineInFileAttrs> {
   return { name, 'ansible.builtin.lineinfile': attrs, ...common }
 }
