@@ -32,4 +32,4 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
-      - run: pnpm run test ${{matrix.test-file}}
+      - run: pnpm run ci:test ${{matrix.test-file}}

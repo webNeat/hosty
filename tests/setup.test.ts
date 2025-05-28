@@ -1,4 +1,4 @@
-import { test } from './utils/index.js'
+import { test } from './utils.js'
 
 test('setup', async ({ assert }) => {
   assert.command(`docker --version`, { success: true })

@@ -30,7 +30,7 @@ export function build_repo(config: Config): Block {
     builtin.tempfile(`Create a temp dir to clone the repo`, { state: 'directory' }, { register: 'clone_dir', when: 'source_file.changed' }),
     builtin.git(
       `Clone the repo`,
-      { repo: config.repo_url, version: config.branch, accept_hostkey: true, dest: '{{clone_dir.path}}' },
+      { repo: config.repo_url, version: config.branch, accept_hostkey: true, dest: '{{clone_dir.path}}', depth: 1 },
       { when: 'source_file.changed' },
     ),
     builtin.copy(

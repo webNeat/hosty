@@ -49,7 +49,7 @@ export function get_url(name: string, attrs: GetUrlAttrs, common: CommonTaskAttr
   return { name, 'ansible.builtin.get_url': attrs, ...common }
 }
 
-export type GitAttrs = { repo: string; dest: string; version: string; accept_hostkey: boolean }
+export type GitAttrs = { repo: string; dest: string; version: string; accept_hostkey: boolean; depth?: number }
 export function git(name: string, attrs: GitAttrs, common: CommonTaskAttrs = {}): Task<'ansible.builtin.git', GitAttrs> {
   return { name, 'ansible.builtin.git': attrs, ...common }
 }

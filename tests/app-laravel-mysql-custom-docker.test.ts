@@ -1,4 +1,4 @@
-import { test } from './utils/index.js'
+import { test } from './utils.js'
 import { app, db } from '../src/index.js'
 
 test('app: laravel + mysql + custom dockerfile', async ({ deploy, destroy, assert }) => {

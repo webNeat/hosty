@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises'
-import { test } from './utils/index.js'
+import { test } from './utils.js'
 import { container } from '../src/index.js'
 
 test('simple container', async ({ deploy, destroy, assert }) => {

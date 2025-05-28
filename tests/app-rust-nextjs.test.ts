@@ -1,4 +1,4 @@
-import { test } from './utils/index.js'
+import { test } from './utils.js'
 import { app } from '../src/index.js'
 
 test('app: monorepo rust + nextjs', async ({ deploy, destroy, assert }) => {
