@@ -1,0 +1,7 @@
+{{domain}} {
+  # Use self-signed cert for local .local domains
+  tls internal
+  reverse_proxy {{local_urls}} {
+    lb_policy client_ip_hash
+  }
+}

@@ -1,4 +1,4 @@
-import { test } from './utils/index.js'
+import { test } from './utils.js'
 import { app, command } from '../src/index.js'
 
 test('app: adonis + migrations + custom dockerfile', async ({ deploy, destroy, assert }) => {
@@ -30,6 +30,7 @@ test('app: adonis + migrations + custom dockerfile', async ({ deploy, destroy, a
 
   deploy(api, migration)
   assert.command(`docker ps --filter "name=adonis-api-1"`, { stdout_contains: 'adonis-api-1' }, { become: true })
+  assert.command(`sleep 10`, { success: true })
   assert.command(`curl -k https://adonis-api.local`, { success: true, stdout: `{"hello":"world"}` })
   assert.command(`curl -k https://adonis-api.local/users`, {
     success: true,

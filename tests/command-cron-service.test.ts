@@ -1,4 +1,4 @@
-import { test } from './utils/index.js'
+import { test } from './utils.js'
 import { db, command } from '../src/index.js'
 
 test('add/delete cron to/from a service', async ({ deploy, destroy, assert }) => {

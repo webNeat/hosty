@@ -28,13 +28,31 @@ export type ServerConfig = {
   name: string
   ssh_key?: {
     path: string
-    passphrase: string
+    passphrase?: string
   }
   git_config?: { name?: string; email?: string }
   hosty_dir?: string
   docker_network?: string
   docker_prefix?: string
   connection?: LocalConnection | SshConnection | DockerConnection
+  reverse_proxy?: ReverseProxy
+}
+
+export type ReverseProxy = {
+  get_log_path: (server: Server) => string
+  get_server_tasks: (server: Server) => Tasks
+  get_service_tasks: (server: Server, config: ReverseProxyConfig) => Tasks
+}
+
+export type ReverseProxyConfig = {
+  service_name: string
+  domain: string
+  instances: number
+}
+
+export type CaddyConfig = {
+  get_server_caddyfile?: (server: Server) => string
+  get_service_caddyfile?: (server: Server, config: ReverseProxyConfig) => string
 }
 
 export type Server = Required<ServerConfig> & {

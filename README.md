@@ -50,7 +50,7 @@ This code will do the following:
 # Requirements
 **On local machine:**
 - [Ansible](https://www.ansible.com/) (tested with v2.16.6)
-- Nodejs (tested with v22.8)
+- Node.js (tested with v22.8)
 
 **On the server**
 - A Linux server that uses `apt` and `systemctl` (tested on Ubuntu 22.04)

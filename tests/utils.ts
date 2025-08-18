@@ -1,6 +1,6 @@
 import * as zx from 'zx'
 import { ChildProcess } from 'child_process'
-import { HostyInstance, Server, Service, tasks, server, internals } from '../../src/index.js'
+import { HostyInstance, Server, Service, tasks, server, internals } from '../src/index.js'
 
 const {
   instance,
@@ -54,11 +54,6 @@ export async function run() {
     }
   }
 
-  if (failures.length === 0) {
-    await $`rm -rf .tests`
-    return
-  }
-
   for (const { name, output } of failures) {
     console.log('')
     console.log(`------------------------------------------`)
@@ -67,24 +62,27 @@ export async function run() {
     console.log(output)
   }
 
-  process.exit(1)
+  if (failures.length > 0) {
+    process.exit(1)
+  }
 }
 
 async function run_test_case({ name, fn }: TestCase) {
-  const test_name = name.replace(/[^a-zA-Z0-9]/g, '-')
+  const test_name = name.replace(/[^a-zA-Z0-9]/g, '-') + Date.now()
   const playbook_path = `.tests/${test_name}.yaml`
   const user = (await $`whoami`).stdout.trim()
 
   const container = server({
     name: 'localhost',
     connection: { type: 'local', user },
-    ssh_key: { path: '~/.ssh/id_rsa', passphrase: '' },
+    ssh_key: { path: '~/.ssh/id_rsa' },
     git_config: { name: 'Amine Ben hammou', email: 'webneat@gmail.com' },
   })
   const test_instance = instance()
   await fn(make_test_context(container, test_instance))
 
   const res = await wait_process(await test_instance.run({ playbook_path, ask_sudo_pass: false, spawn_options: { stdio: 'pipe' } }))
+  await $`chmod 777 ${playbook_path}`
   if (res.exitCode) throw res.output
   await $`docker ps -q --filter "name=^/hosty-" | xargs -r docker stop`
   await $`docker ps -aq --filter "name=^/hosty-" | xargs -r docker rm`
@@ -99,9 +97,11 @@ async function wait_process(ps: ChildProcess) {
   return new Promise<ProcessResult>((resolve, reject) => {
     const res: ProcessResult = { exitCode: null, output: '' }
     ps.stdout?.on('data', (data) => {
+      // console.error(data.toString())
       res.output += data.toString()
     })
     ps.stderr?.on('data', (data) => {
+      // console.error(data.toString())
       res.output += data.toString()
     })
     ps.on('close', (code) => {

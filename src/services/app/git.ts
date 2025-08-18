@@ -17,11 +17,6 @@ function get_deploy_tasks(server: Server, config: GitAppConfig): Tasks {
   config.instances ||= 1
   const tasks: Tasks = []
   const service_dir = path.join(server.hosty_dir, 'services', config.name)
-
-  if (config.domain) {
-    tasks.push(blocks.set_available_ports(service_dir, config.instances, 'app_ports'))
-  }
-
   tasks.push(
     blocks.build_repo({
       repo_url: config.repo,
@@ -45,7 +40,13 @@ function get_deploy_tasks(server: Server, config: GitAppConfig): Tasks {
   tasks.push(service)
 
   if (config.domain) {
-    tasks.push(blocks.create_domain({ domain: config.domain, ports_var: 'app_ports', caddyfile_path: path.join(service_dir, 'Caddyfile') }))
+    tasks.push(
+      ...server.reverse_proxy.get_service_tasks(server, {
+        service_name: config.name,
+        domain: config.domain,
+        instances: config.instances,
+      }),
+    )
   }
   return tasks
 }
@@ -65,14 +66,10 @@ function make_composes(config: GitAppConfig) {
   const compose = config.compose || {}
   compose.image = config.name
   compose.environment = { ...(config.env || {}), ...(compose.environment || {}) }
-  compose.ports ||= []
 
-  const composes = []
-  for (let i = 1; i <= config.instances!; i++) {
-    composes.push({
-      ...compose,
-      ports: [...compose.ports, `{{app_ports[${i - 1}]}}:80`],
-    })
+  const composes: (typeof compose)[] = []
+  for (let i = 0; i < config.instances!; i++) {
+    composes.push({ ...compose })
   }
   return composes
 }

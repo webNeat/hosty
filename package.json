@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "test": "node --import tsx test.ts"
+    "test": "rm -rf .tests/* && docker builder prune -f -a && node --import tsx test.ts",
+    "ci:test": "NODE_ENV=ci node --import tsx test.ts"
   },
   "repository": {
     "type": "git",
@@ -30,13 +31,13 @@
   },
   "homepage": "https://github.com/webNeat/hosty",
   "devDependencies": {
-    "@types/node": "^20.16.5",
-    "prettier": "^3.2.5",
-    "tsx": "^4.10.5",
-    "typescript": "^5.4.5",
-    "zx": "^8.1.4"
+    "@types/node": "^24.3.0",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2",
+    "zx": "^8.8.0"
   },
   "dependencies": {
-    "yaml": "^2.4.5"
+    "yaml": "^2.8.1"
   }
 }

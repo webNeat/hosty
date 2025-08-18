@@ -24,7 +24,7 @@ export function file(name: string, attrs: FileAttrs, common: CommonTaskAttrs = {
   return { name, 'ansible.builtin.file': attrs, ...common }
 }
 
-export type LineInFileAttrs = { path: string; line: string; state: 'present' | 'absent' }
+export type LineInFileAttrs = { path: string; line: string; state: 'present' | 'absent'; unsafe_writes?: boolean }
 export function lineinfile(name: string, attrs: LineInFileAttrs, common: CommonTaskAttrs = {}): Task<'ansible.builtin.lineinfile', LineInFileAttrs> {
   return { name, 'ansible.builtin.lineinfile': attrs, ...common }
 }
@@ -49,7 +49,7 @@ export function get_url(name: string, attrs: GetUrlAttrs, common: CommonTaskAttr
   return { name, 'ansible.builtin.get_url': attrs, ...common }
 }
 
-export type GitAttrs = { repo: string; dest: string; version: string; accept_hostkey: boolean }
+export type GitAttrs = { repo: string; dest: string; version: string; accept_hostkey: boolean; depth?: number }
 export function git(name: string, attrs: GitAttrs, common: CommonTaskAttrs = {}): Task<'ansible.builtin.git', GitAttrs> {
   return { name, 'ansible.builtin.git': attrs, ...common }
 }

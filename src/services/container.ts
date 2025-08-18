@@ -20,12 +20,12 @@ function get_deploy_tasks(server: Server, { name, compose, files_dir, files }: C
       files_dir,
       files,
       docker_network: server.docker_network,
-      service_dir: path.join(server.hosty_dir, '/services', name),
+      service_dir: path.join(server.hosty_dir, 'services', name),
       restart_conditions: [],
     }),
   ]
 }
 
 function get_destroy_tasks(server: Server, { name }: ContainerConfig): Tasks {
-  return [blocks.delete_service(path.join(server.hosty_dir, '/services', name))]
+  return [blocks.delete_service(path.join(server.hosty_dir, 'services', name))]
 }

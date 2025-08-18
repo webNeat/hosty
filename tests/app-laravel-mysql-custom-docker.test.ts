@@ -1,4 +1,4 @@
-import { test } from './utils/index.js'
+import { test } from './utils.js'
 import { app, db } from '../src/index.js'
 
 test('app: laravel + mysql + custom dockerfile', async ({ deploy, destroy, assert }) => {
@@ -77,5 +77,6 @@ test('app: laravel + mysql + custom dockerfile', async ({ deploy, destroy, asser
   assert.file(`/srv/hosty/services/laravel-app`, { exists: false })
   assert.command(`docker ps -q --filter "name=laravel-app-1"`, { stdout: '' }, { become: true })
   assert.command(`docker ps -q --filter "name=laravel-db"`, { stdout: '' }, { become: true })
+  assert.command(`sleep 20`, { stdout: '' })
   assert.command(`curl -k https://laravel.local`, { success: false, stderr_contains: 'Could not resolve host: laravel.local' })
 })
